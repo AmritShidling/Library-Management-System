@@ -1,0 +1,84 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: borrow-service
+
+  datasource:
+    url: jdbc:h2:mem:borrowdb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  cloud:
+    gateway:
+      routes:
+        - id: borrow-service-route
+          uri: lb://BORROW-SERVICE
+          predicates:
+            - Path=/v1/borrows/**
+    circuitbreaker:
+      resilience4j:
+        instances:
+          bookService:
+            slidingWindowSize: 10
+            failureRateThreshold: 50
+            waitDurationInOpenState: 10000
+            permittedNumberOfCallsInHalfOpenState: 3
+          userService:
+            slidingWindowSize: 10
+            failureRateThreshold: 50
+            waitDurationInOpenState: 10000
+            permittedNumberOfCallsInHalfOpenState: 3
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://service-discovery:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example.borrowservice: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: ERROR
+
+app:
+  borrow:
+    max-books-per-user: 5
+    loan-period-days: 14
+  service:
+    book-service-url: http://book-service
+    user-service-url: http://user-service

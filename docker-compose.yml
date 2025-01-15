@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  api-gateway:      
+    build:
+      context: ./gate-way
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-discovery
+      - user-service
+      - book-service
+      - borrow-service
+    networks:
+      - app-network
+
+  service-discovery:
+    build:
+      context: ./service-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+
+  book-service:
+    build:
+      context: ./book-service
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+  borrow-service:
+    build:
+      context: ./borrowing-service
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+
+  angular-ui:
+    build:
+      context: ./library-management
+    ports:
+      - "80:80" 
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
