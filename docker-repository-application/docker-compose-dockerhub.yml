@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  service-discovery:
+    image: amritls/libraymanagementsystem-service-discovery:latest
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api-gateway:
+    image: amritls/libraymanagementsystem-api-gateway:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+
+  book-service:
+    image: amritls/libraymanagementsystem-book-service:latest
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+
+  user-service:
+    image: amritls/libraymanagementsystem-user-service:latest
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+
+  borrow-service:
+    image: amritls/libraymanagementsystem-borrow-service:latest
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+
+  angular-ui:
+    image: amritls/libraymanagementsystem-angular-ui:latest
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: librarydb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
