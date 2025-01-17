@@ -9,6 +9,8 @@ The Library Management System is a microservice-based application designed to ma
 - **Book Service**
 - **Borrow Service**
 - **Angular UI**
+
+## Few screenshots of Library Managerment System Application UI
   
 ![image](https://github.com/user-attachments/assets/2faf43bd-2fb5-457d-9270-7d8d677f4442)
 
@@ -87,7 +89,7 @@ Ensure the following are installed on your system:
 
    - **Frontend (Angular UI)**:
      ```
-     http://localhost:4200
+     http://localhost
      ```
 
 
@@ -221,18 +223,34 @@ The following APIs are available through the API Gateway:
    
    ```
 - **GET** `v1/books` - Get a list of all books.
+    ***Response***
      ```
       [
+         {
+            "id": 1,
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "isbn": "4567",
+             "available": true
+        },
         {
-          "id": 1,
-          "title": "The Great Gatsby",
-          "author": "F. Scott Fitzgerald",
-          "isbn": "9780743273565"
+            "id": 2,
+            "title": "Harry Potter",
+            "author": "JK Rowlling",
+            "isbn": "1234",
+            "available": false
+        },
+        {
+            "id": 3,
+            "title": "Alice in the wonderland",
+            "author": "Alice",
+            "isbn": "3456",
+            "available": false
         }
-      ]
+    ]
      ```
 - **GET** `v1/books/{id}` - Get details of a specific book.
-
+    ***Response***
    ```
    {
      "id": 1,
@@ -242,30 +260,101 @@ The following APIs are available through the API Gateway:
    }
    ```
 - **PUT** `v1/books/{id}` - Update book details.
+  ```
+  {
+    "id": 3,
+    "title": "Alice in the wonderland",
+    "author": "Alice",
+    "isbn": "3456",
+    "available": true
+  }
+  ```
   
 - **DELETE** `v1/books/{id}` - Delete a book.
 
 ### Borrow Service
 
 - **POST** `/v1/services/borrow?userId={uid}&bookId={bid}` - Borrow a book.
+  ***Response***
+  ```
+  {
+    "id": 1,
+    "userId": 1,
+    "bookId": 1,
+    "borrowDate": "2025-01-17T10:07:20.466706787",
+    "returnDate": null,
+    "status": "BORROWED",
+  }
+  ```
 - **POST** `v1/return/{borrowId}` - Return a book.
+  ***Response***
+  ```
+  {
+    "id": 1,
+    "userId": 1,
+    "bookId": 1,
+    "borrowDate": "2025-01-17T10:07:20.466707",
+    "returnDate": "2025-01-17T10:10:38.962341398",
+    "status": "RETURNED"
+  }
+  ```
 - **GET** `v1/borrow/history` - Get borrowing history for all users.
+ ***Response***
+  ```
+  [
+    {
+        "id": 1,
+        "userName": "sdx",
+        "bookTitle": "Greater",
+        "borrowDate": "2025-01-17T10:07:20.466707",
+        "returnDate": "2025-01-17T10:10:38.962341"
+    },
+    {
+        "id": 2,
+        "userName": "Sam",
+        "bookTitle": "Harry Potter",
+        "borrowDate": "2025-01-17T10:16:28.733782",
+        "returnDate": null
+    }
+  ]
+  ```
+  
 - **GET** `v1/services/borrow-history/{id}` - Get borrowing history for a specific users.
+  ```
+  [
+    {
+        "id": 1,
+        "userId": 1,
+        "bookId": 1,
+        "borrowDate": "2025-01-17T10:07:20.466707",
+        "returnDate": "2025-01-17T10:10:38.962341",
+        "status": "RETURNED"
+    },
+    {
+        "id": 3,
+        "userId": 1,
+        "bookId": 3,
+        "borrowDate": "2025-01-17T10:18:42.146322",
+        "returnDate": null,
+        "status": "BORROWED"
+    }
+  ]
+  ```
 ---
 
 ## Folder Structure
 
 ```
-root/
-├── gate-way/
-├── user-service/
-├── book-service/
-├── borrow-service/
-├── library-management/ (Angular UI)
-├── docker-repository-application/
-│   └── docker-compose-dockerhub.yml
-├── docker-compose.yml
-└── README.md
+    root/
+    ├── gate-way/
+    ├── user-service/
+    ├── book-service/
+    ├── borrow-service/
+    ├── library-management/ (Angular UI)
+    ├── docker-repository-application/
+    │   └── docker-compose-dockerhub.yml
+    ├── docker-compose.yml
+    └── README.md
 ```
 
 ---
@@ -294,5 +383,5 @@ root/
 
 ---
 
-Thank you for using the Library Management System! Feel free to raise issues or contribute enhancements via the repository.
+Thank you for using the Library Management System! 
 
