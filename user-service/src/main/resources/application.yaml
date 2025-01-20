@@ -18,24 +18,22 @@ spring:
     console:
       enabled: true
       path: /h2-console
-  cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false # Disable Ribbon if using Spring Cloud LoadBalancer
-    gateway:
-      routes:
-        - id: user-service-route
-          uri: lb://BOOK-SERVICE
-          predicates:
-            - Path=/v1/users/**
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/ #http://service-discovery:8761/eureka/
+#    register-with-eureka: true
+#    fetch-registry: true
+#  instance:
+#    prefer-ip-address: true
+#    hostname: localhost
 
 eureka:
   client:
-    service-url:
-      defaultZone: http://service-discovery:8761/eureka/
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://service-discovery:8761/eureka/}
     register-with-eureka: true
     fetch-registry: true
   instance:
     prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-#
+    hostname: ${spring.application.name}

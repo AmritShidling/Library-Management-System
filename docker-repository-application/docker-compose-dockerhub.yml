@@ -1,15 +1,26 @@
 version: '3.8'
 
+networks:
+  library-network:
+    driver: bridge
+
 services:
   service-discovery:
     image: amritls/libraymanagementsystem-service-discovery:latest
     ports:
       - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+      - EUREKA_SERVER_WAIT_TIME_IN_MS_WHEN_SYNC_EMPTY=0
+      - SPRING_CLOUD_CONFIG_ENABLED=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8761"]
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - library-network
 
   api-gateway:
     image: amritls/libraymanagementsystem-api-gateway:latest
@@ -19,7 +30,12 @@ services:
       service-discovery:
         condition: service_healthy
     environment:
+      - SPRING_APPLICATION_NAME=api-gateway
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+    networks:
+      - library-network
 
   book-service:
     image: amritls/libraymanagementsystem-book-service:latest
@@ -27,7 +43,12 @@ services:
       service-discovery:
         condition: service_healthy
     environment:
+      - SPRING_APPLICATION_NAME=book-service
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+    networks:
+      - library-network
 
   user-service:
     image: amritls/libraymanagementsystem-user-service:latest
@@ -35,7 +56,12 @@ services:
       service-discovery:
         condition: service_healthy
     environment:
+      - SPRING_APPLICATION_NAME=user-service
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+    networks:
+      - library-network
 
   borrow-service:
     image: amritls/libraymanagementsystem-borrow-service:latest
@@ -43,7 +69,12 @@ services:
       service-discovery:
         condition: service_healthy
     environment:
+      - SPRING_APPLICATION_NAME=borrow-service
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+    networks:
+      - library-network
 
   angular-ui:
     image: amritls/libraymanagementsystem-angular-ui:latest
@@ -51,17 +82,5 @@ services:
       - "4200:80"
     depends_on:
       - api-gateway
-
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: librarydb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+    networks:
+      - library-network
