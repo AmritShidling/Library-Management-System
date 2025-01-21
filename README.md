@@ -70,7 +70,14 @@ Ensure the following are installed on your system:
 
 ### Steps to Run Using Docker (Pulling Images from Docker Hub)
 
-1. **Pull the Repository Images**: You do not need the source code locally. Simply pull and run the application using Docker Compose.
+1. **docker-compose file**
+   Download https://github.com/AmritShidling/Library-Management-System/blob/main/docker-repository-application/docker-compose-latest.yaml
+   go into the folder, which contains this folder and run below command 
+    ```
+    docker-compose -f docker-compose-latest.yaml up
+    ```
+  **OR**
+ **Pull the Repository Images**: You do not need the source code locally. Simply pull and run the application using Docker Compose.
 
    ```bash
    mkdir Library-Management-System
@@ -89,7 +96,7 @@ Ensure the following are installed on your system:
 
    - **Frontend (Angular UI)**:
      ```
-     http://localhost
+     http://localhost:4200
      ```
 
 
