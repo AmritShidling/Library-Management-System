@@ -1,7 +1,29 @@
 server:
   port: 8761
 
+spring:
+  application:
+    name: service-discovery
+
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+  instance:
+    hostname: ${spring.application.name}
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.netflix.eureka: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: ERROR
